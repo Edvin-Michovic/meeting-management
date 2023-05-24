@@ -1,0 +1,12 @@
+[ {
+  "name" : "My third meeting",
+  "responsiblePerson" : "Bill Gates",
+  "description" : "Meeting to discuss our points and future [PART 3]",
+  "meetingCategory" : "Hub",
+  "meetingType" : "InPerson",
+  "startDate" : [ 2023, 6, 20, 20, 30 ],
+  "endDate" : [ 2023, 6, 20, 21, 0 ],
+  "participants" : {
+    "Bill Gates" : [ 2023, 5, 24, 15, 5 ]
+  }
+} ]

@@ -1,0 +1,42 @@
+### List all existing meetings
+
+GET http://localhost:8080/meetings?description=meeting
+
+### Find meeting by its name
+
+GET http://localhost:8080/meetings/My third meeting
+
+### Create new meeting
+
+POST http://localhost:8080/meetings
+Content-Type: application/json
+
+  {
+    "name": "My third meeting",
+    "responsiblePerson": "Bill Gates",
+    "description": "Meeting to discuss our points and future [PART 3]",
+    "meetingCategory": "Hub",
+    "meetingType": "InPerson",
+    "startDate": "2023-06-20T20:30:00",
+    "endDate": "2023-06-20T21:00:00"
+  }
+
+
+
+### Delete meeting
+
+DELETE http://localhost:8080/meetings/My third meeting?responsiblePerson=Bill Gates
+
+### Add participant(s)
+
+PUT http://localhost:8080/meetings/My third meeting/addParticipant
+Content-Type: application/json
+
+["Edvin Michovic", "Aleksandr Guarero", "Michael Holts"]
+
+### Remove participant(s)
+
+DELETE http://localhost:8080/meetings/My third meeting/removeParticipant
+Content-Type: application/json
+
+["Edvin Michovic", "Aleksandr Guarero"]
