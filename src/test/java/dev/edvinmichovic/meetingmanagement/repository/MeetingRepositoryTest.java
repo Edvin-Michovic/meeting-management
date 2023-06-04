@@ -59,8 +59,8 @@ public class MeetingRepositoryTest {
     @Order(2)
     void testSaveNewMeeting() {
         MeetingDTO meeting4 = new MeetingDTO("Meeting 4", "John Doe", "Meeting description",
-                "CodeMonkey", "InPerson", LocalDateTime.of(2023, 5,24, 10, 0),
-                LocalDateTime.of(2023, 5,25, 10, 0),
+                "CodeMonkey", "InPerson", LocalDateTime.of(2023, 5, 24, 10, 0),
+                LocalDateTime.of(2023, 5, 25, 10, 0),
                 new HashMap<>());
 
         repository.save(meeting4);
@@ -74,8 +74,8 @@ public class MeetingRepositoryTest {
         assertEquals("Meeting description", savedMeeting.description());
         assertEquals(Category.CodeMonkey, savedMeeting.meetingCategory());
         assertEquals(Type.InPerson, savedMeeting.meetingType());
-        assertEquals(LocalDateTime.of(2023, 5,24, 10, 0), savedMeeting.startDate());
-        assertEquals(LocalDateTime.of(2023, 5,25, 10, 0), savedMeeting.endDate());
+        assertEquals(LocalDateTime.of(2023, 5, 24, 10, 0), savedMeeting.startDate());
+        assertEquals(LocalDateTime.of(2023, 5, 25, 10, 0), savedMeeting.endDate());
         assertTrue(savedMeeting.participants().containsKey(savedMeeting.responsiblePerson()));
     }
 

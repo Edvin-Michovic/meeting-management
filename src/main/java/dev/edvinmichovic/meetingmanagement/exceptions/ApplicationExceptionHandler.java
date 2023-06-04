@@ -21,7 +21,7 @@ public class ApplicationExceptionHandler {
 
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     @ExceptionHandler(MethodArgumentNotValidException.class)
-    public Map<String, String> handleInvalidArgument (MethodArgumentNotValidException ex) {
+    public Map<String, String> handleInvalidArgument(MethodArgumentNotValidException ex) {
         Map<String, String> errorMap = new HashMap<>();
         ex.getBindingResult().getFieldErrors().forEach(exception -> errorMap.put(exception.getField(), exception.getDefaultMessage()));
         return errorMap;
@@ -29,30 +29,30 @@ public class ApplicationExceptionHandler {
 
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     @ExceptionHandler(MissingServletRequestParameterException.class)
-    public String handleMissingArgument (MissingServletRequestParameterException ex) {
+    public String handleMissingArgument(MissingServletRequestParameterException ex) {
         return ex.getMessage();
     }
 
     @ResponseStatus(HttpStatus.NOT_FOUND)
     @ExceptionHandler(ResponseStatusException.class)
-    public String handleNotFoundArgument (ResponseStatusException ex) {
+    public String handleNotFoundArgument(ResponseStatusException ex) {
         return ex.getReason();
     }
 
-   @ResponseStatus(HttpStatus.BAD_REQUEST)
-   @ExceptionHandler(ConstraintViolationException.class)
-   public String handleConstraintViolation (ConstraintViolationException ex) {
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    @ExceptionHandler(ConstraintViolationException.class)
+    public String handleConstraintViolation(ConstraintViolationException ex) {
         return ex.getConstraintViolations().stream().map(ConstraintViolation::getMessage).collect(Collectors.joining("\n"));
-   }
+    }
 
-   @ResponseStatus(HttpStatus.BAD_REQUEST)
-   @ExceptionHandler(MethodArgumentTypeMismatchException.class)
-   public String handleMismatchException (MethodArgumentTypeMismatchException ex) {
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    @ExceptionHandler(MethodArgumentTypeMismatchException.class)
+    public String handleMismatchException(MethodArgumentTypeMismatchException ex) {
         MethodParameter parameter = ex.getParameter();
         String parameterName = parameter.getParameterName();
         Class<?> requiredType = parameter.getParameterType();
         Object incorrectValue = ex.getValue();
         return "Invalid value for parameter '" + parameterName + "'. Expected type: " + requiredType.getSimpleName() + ". Actual value: " + incorrectValue;
-   }
+    }
 
 }

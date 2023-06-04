@@ -2,6 +2,7 @@ package dev.edvinmichovic.meetingmanagement.repository;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import dev.edvinmichovic.meetingmanagement.dto.MeetingDTO;
 import dev.edvinmichovic.meetingmanagement.model.Category;
@@ -26,28 +27,33 @@ public class MeetingRepository {
     private final List<Meeting> meetingList = new ArrayList<>();
     private final String jsonFilePathFromContentRoot;
     private final String jsonFilePathFromSourceRoot;
+    private final ObjectMapper objectMapper;
 
     public MeetingRepository() {
         this.jsonFilePathFromContentRoot = "src/main/resources/json/meetings.json";
         this.jsonFilePathFromSourceRoot = "/json/meetings.json";
+        this.objectMapper = new ObjectMapper()
+                .registerModule(new JavaTimeModule())
+                .disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS);
     }
 
     /**
      * Method allows to READ the meetings.
      * Depending on the parameter that was sent, filter to the result list is assigned.
      * E.g. it will filter meetings by description, AND e.g. type.
-     * @param description - parameter allows to filter by description.
-     *                    if the description is "Jono Java meetas", searching for
-     *                    "java" returns the entry.
+     *
+     * @param description       - parameter allows to filter by description.
+     *                          if the description is "Jono Java meeting", searching for
+     *                          "java" returns the entry.
      * @param responsiblePerson - parameter allows to filter by responsible person.
-     * @param category - parameter allows to filter by category.
-     * @param type - parameter allows to filter by type.
-     * @param startDate - parameter allows to filter by starting date.
-     * @param endDate - parameter allows to filter by ending date.
-     *                Meetings can be filtered between the dates.
-     * @param minAttendees - parameter allows to filter number of attendees.
-     *                     Note: if the minAttendees is 10, it will show the
-     *                     meetings that have 10 or more attendees.
+     * @param category          - parameter allows to filter by category.
+     * @param type              - parameter allows to filter by type.
+     * @param startDate         - parameter allows to filter by starting date.
+     * @param endDate           - parameter allows to filter by ending date.
+     *                          Meetings can be filtered between the dates.
+     * @param minAttendees      - parameter allows to filter number of attendees.
+     *                          Note: if the minAttendees is 10, it will show the
+     *                          meetings that have 10 or more attendees.
      * @return - method returns the list of meetings found.
      */
     public List<Meeting> findAll(String description,
@@ -63,19 +69,20 @@ public class MeetingRepository {
                 .filter(meeting -> category == null || meeting.meetingCategory().equals(Category.valueOf(category)))
                 .filter(meeting -> type == null || meeting.meetingType().equals(Type.valueOf(type)))
                 .filter(meeting -> startDate == null || meeting.startDate().isAfter(startDate.atStartOfDay()))
-                .filter(meeting -> endDate == null || meeting.endDate().isBefore(endDate.atTime(23,59)))
+                .filter(meeting -> endDate == null || meeting.endDate().isBefore(endDate.atTime(23, 59)))
                 .filter(meeting -> minAttendees == null || meeting.participants().size() >= minAttendees)
                 .collect(Collectors.toList());
     }
 
     /**
      * Method implemented to FIND the existing meeting by its name.
+     *
      * @param name - the name of the meeting, represented in the String format.
      * @return - returns the optional list of meetings.
      */
     public Optional<Meeting> findByName(String name) {
         return meetingList.stream()
-                .filter(meeting-> meeting.name().equals(name))
+                .filter(meeting -> meeting.name().equals(name))
                 .findFirst();
     }
 
@@ -85,6 +92,7 @@ public class MeetingRepository {
      * The method will necessarily add the responsible person into the participants list, even
      * if the responsible person is already added.
      * Worth to mention that meeting with the same naming will be overwritten.
+     *
      * @param meetingDTO - the DTO representation of meeting class.
      *                   The data of the meetingDTO object is converted
      *                   to Meeting class object.
@@ -114,7 +122,8 @@ public class MeetingRepository {
      * Method implemented to DELETE the meeting.
      * It double-checks the naming, and the responsible person provided.
      * In case of the meeting, with correct naming, and correct responsible person provided exists, the meeting will be successfully deleted.
-     * @param name - name of the meeting, that is going to be deleted.
+     *
+     * @param name              - name of the meeting, that is going to be deleted.
      * @param responsiblePerson - name of the responsible person for particular meeting.
      */
     public boolean delete(String name, String responsiblePerson) {
@@ -126,14 +135,17 @@ public class MeetingRepository {
      * It only adds the participants, that were not present in the meeting.
      * In case of the duplicates of attendees (that are present in the meeting already),
      * it will return the list of the participants, that were not added for that reason.
-     * @param name - the name of the meeting.
+     *
+     * @param name         - the name of the meeting.
      * @param participants - list of the participant(s) names.
      * @return - returns the list of the duplicates attendees (the ones, that were not added,
-     *         because they are already present)
+     * because they are already present)
      */
     public List<String> addParticipant(String name, List<String> participants) {
         Meeting meeting = findByName(name)
-                .orElseThrow(() -> { throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Meeting with such name was not found"); });
+                .orElseThrow(() -> {
+                    throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Meeting with such name was not found");
+                });
         Iterator<String> iterator = participants.iterator();
 
         while (iterator.hasNext()) {
@@ -152,59 +164,67 @@ public class MeetingRepository {
      * Method implemented to REMOVE PARTICIPANTS from the meeting.
      * It only removes the participants, that are present in the meeting.
      * Also, the method does not delete the responsible person.
-     * @param name - the name of the meeting.
+     *
+     * @param name         - the name of the meeting.
      * @param participants - list of the participant(s) names.
      */
     public void removeParticipant(String name, List<String> participants) {
         Meeting meeting = findByName(name)
-                .orElseThrow(() -> { throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Meeting with such name was not found"); });
+                .orElseThrow(() -> {
+                    throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Meeting with such name was not found");
+                });
 
         Stream<String> participantsToBeRemoved = participants.stream().filter(p -> meeting.participants().containsKey(p) && !meeting.responsiblePerson().equals(p));
         participantsToBeRemoved.forEach(p -> meeting.participants().remove(p));
     }
 
     /**
-     * PostConstruct that loads the data from the meetings.json file as the program starts.
-     * The root is Source Root.
+     * Method that reads the data from .json and saves it into the list of the active meetings.
+     *
+     * @param sourceRoot - the source root of the file that data is taken from.
+     *                   e.g. "/json/meetings.json"
      */
-    @PostConstruct
-    private void init() {
-        ObjectMapper mapper = new ObjectMapper();
-        mapper.registerModule(new JavaTimeModule());
-        TypeReference<List<MeetingDTO>> typeReference = new TypeReference<>() {};
-
-        try (InputStream inputStream = TypeReference.class.getResourceAsStream(jsonFilePathFromSourceRoot)) {
-            List<MeetingDTO> meetingDTOList = mapper.readValue(inputStream, typeReference);
+    public void readFromJsonFile(String sourceRoot) {
+        try (InputStream inputStream = TypeReference.class.getResourceAsStream(sourceRoot)) {
+            List<MeetingDTO> meetingDTOList = objectMapper.readValue(inputStream, new TypeReference<>() {
+            });
             meetingDTOList.forEach(this::save);
-            System.out.println("Meetings successfully detected in .json file.");
         } catch (IOException e) {
             System.out.println("Unable to read any meetings: " + e.getMessage());
         }
     }
 
     /**
-     * PreDestroy that saves the data from the meetings list to the meetings.json file as the program finishes.
-     * The root is Content Root.
+     * Method that reads the data from meetings' list and saves it into the json file.
+     *
+     * @param contentRoot - the content root of the file that data is saved to.
+     *                    e.g. "src/main/resources/json/meetings.json"
      */
-    @PreDestroy
-    private void preDestroy() {
-        ObjectMapper mapper = new ObjectMapper();
-        mapper.registerModule(new JavaTimeModule());
-
-        try (OutputStream outputStream = new FileOutputStream(jsonFilePathFromContentRoot)) {
-            mapper.writerWithDefaultPrettyPrinter().writeValue(outputStream,
-                    this.findAll(null,
-                            null,
-                            null,
-                            null,
-                            null,
-                            null,
-                            null));
-            System.out.println("Successfully saved all information into .json file.");
+    public void writeToJsonFile(String contentRoot) {
+        try (OutputStream outputStream = new FileOutputStream(contentRoot)) {
+            List<Meeting> meetingsToWrite = this.findAll(null, null, null, null, null, null, null);
+            objectMapper.writerWithDefaultPrettyPrinter().writeValue(outputStream, meetingsToWrite);
         } catch (IOException e) {
             System.out.println("Unable to save meetings' information: " + e.getMessage());
         }
+    }
 
+    /**
+     * PostConstruct that loads the data from the meetings.json (by default) file as the program starts.
+     * The root for Post Construct is Source Root (defined in constructor).
+     */
+    @PostConstruct
+    private void init() {
+        readFromJsonFile(jsonFilePathFromSourceRoot);
+    }
+
+    /**
+     * PreDestroy that saves the data from the meetings list to the meetings.json (by default) file as the program finishes.
+     * The root for Pre Destroy is Content Root (defined in constructor).
+     */
+    @PreDestroy
+    private void preDestroy() {
+        writeToJsonFile(jsonFilePathFromContentRoot);
     }
 
 }

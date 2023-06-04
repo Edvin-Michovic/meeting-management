@@ -12,7 +12,7 @@ POST http://localhost:8080/meetings
 Content-Type: application/json
 
   {
-    "name": "My third meeting",
+    "name": "My fifth meeting",
     "responsiblePerson": "Bill Gates",
     "description": "Meeting to discuss our points and future [PART 3]",
     "meetingCategory": "Hub",
@@ -25,7 +25,7 @@ Content-Type: application/json
 
 ### Delete meeting
 
-DELETE http://localhost:8080/meetings/My third meeting?responsiblePerson=Bill Gates
+DELETE http://localhost:8080/meetings/My fifth meeting?responsiblePerson=Bill Gates
 
 ### Add participant(s)
 

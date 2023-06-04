@@ -34,24 +34,24 @@ public class MeetingController {
      */
     @GetMapping("")
     public List<Meeting> findAll(
-            @RequestParam (required = false) String description,
-            @RequestParam (required = false) String responsiblePerson,
-            @RequestParam (required = false)
-            @Pattern(regexp= "^(CodeMonkey|Hub|Short|TeamBuilding)$",
+            @RequestParam(required = false) String description,
+            @RequestParam(required = false) String responsiblePerson,
+            @RequestParam(required = false)
+            @Pattern(regexp = "^(CodeMonkey|Hub|Short|TeamBuilding)$",
                     message = "For the meeting category only CodeMonkey, Hub, Short, or TeamBuilding values are accepted.")
             String category,
-            @RequestParam (required = false)
+            @RequestParam(required = false)
             @Pattern(regexp = "^(Live|InPerson)$",
                     message = "For the meeting type only Live or InPerson values are accepted.")
             String type,
-            @RequestParam (required = false)
-            @DateTimeFormat (iso = DateTimeFormat.ISO.DATE)
+            @RequestParam(required = false)
+            @DateTimeFormat(iso = DateTimeFormat.ISO.DATE)
             LocalDate startDate,
-            @RequestParam (required = false)
+            @RequestParam(required = false)
             @DateTimeFormat(iso = DateTimeFormat.ISO.DATE)
             LocalDate endDate,
-            @Min(value = 0, message = "Minimal value of attendees should be positive.") @RequestParam (required = false) Integer minAttendees
-            ) {
+            @Min(value = 0, message = "Minimal value of attendees should be positive.") @RequestParam(required = false) Integer minAttendees
+    ) {
         return repository.findAll(description, responsiblePerson, category, type, startDate, endDate, minAttendees);
     }
 
@@ -86,7 +86,7 @@ public class MeetingController {
      */
     @ResponseStatus(HttpStatus.NO_CONTENT)
     @DeleteMapping("/{name}")
-    public void delete (@PathVariable String name, @RequestParam String responsiblePerson) {
+    public void delete(@PathVariable String name, @RequestParam String responsiblePerson) {
         if (!repository.delete(name, responsiblePerson)) {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Only responsible person can delete the meeting.\n" +
                     "Please make sure the responsible person is correct for this meeting.");

@@ -9,6 +9,7 @@ import java.util.HashMap;
  * MeetingDTO is record required for Data Transfer Object Design Pattern.
  * In that particular case, such record allows to successfully validate the data,
  * required for the Meeting class.
+ *
  * @param name
  * @param responsiblePerson
  * @param description
@@ -25,7 +26,7 @@ public record MeetingDTO(
         String responsiblePerson,
         String description,
         @NotBlank
-        @Pattern(regexp= "^(CodeMonkey|Hub|Short|TeamBuilding)$",
+        @Pattern(regexp = "^(CodeMonkey|Hub|Short|TeamBuilding)$",
                 message = "For the meeting category only CodeMonkey, Hub, Short, or TeamBuilding values are accepted.")
         String meetingCategory,
         @NotBlank

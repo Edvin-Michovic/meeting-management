@@ -77,7 +77,7 @@ public class MeetingControllerTest {
     @Test
     @Order(1)
     void testFindAllNoFilters() throws Exception {
-        when(repository.findAll(any(), any(), any(), any(), any(),any(), any())).thenReturn(meetings);
+        when(repository.findAll(any(), any(), any(), any(), any(), any(), any())).thenReturn(meetings);
 
         MvcResult result = mockMvc.perform(get("/meetings")
                         .contentType(MediaType.APPLICATION_JSON))
@@ -125,7 +125,7 @@ public class MeetingControllerTest {
     @Test
     @Order(3)
     void testFindAllResponsibleFilter() throws Exception {
-        when(repository.findAll(any(), eq("Gabriel Rogers"), any(), any(), any(),any(), any())).thenReturn(Collections.singletonList(meetings.get(0)));
+        when(repository.findAll(any(), eq("Gabriel Rogers"), any(), any(), any(), any(), any())).thenReturn(Collections.singletonList(meetings.get(0)));
 
         MvcResult result = mockMvc.perform(get("/meetings")
                         .param("responsiblePerson", "Gabriel Rogers")
@@ -143,7 +143,7 @@ public class MeetingControllerTest {
     @Test
     @Order(4)
     void testFindAllCategoryFilter() throws Exception {
-        when(repository.findAll(any(), any(), eq("Hub"), any(), any(),any(), any())).thenReturn(Collections.singletonList(meetings.get(0)));
+        when(repository.findAll(any(), any(), eq("Hub"), any(), any(), any(), any())).thenReturn(Collections.singletonList(meetings.get(0)));
 
         MvcResult result = mockMvc.perform(get("/meetings")
                         .param("category", "Hub")
@@ -161,7 +161,7 @@ public class MeetingControllerTest {
     @Test
     @Order(5)
     void testFindAllTypeFilter() throws Exception {
-        when(repository.findAll(any(), any(), any(), eq("InPerson"), any(),any(), any())).thenReturn(Collections.singletonList(meetings.get(1)));
+        when(repository.findAll(any(), any(), any(), eq("InPerson"), any(), any(), any())).thenReturn(Collections.singletonList(meetings.get(1)));
 
         MvcResult result = mockMvc.perform(get("/meetings")
                         .param("type", "InPerson")
@@ -179,7 +179,7 @@ public class MeetingControllerTest {
     @Test
     @Order(6)
     void testFindAllStartDateFilter() throws Exception {
-        when(repository.findAll(any(), any(), any(), any(), eq(LocalDate.parse("2020-05-30")),any(), any())).thenReturn(Collections.singletonList(meetings.get(1)));
+        when(repository.findAll(any(), any(), any(), any(), eq(LocalDate.parse("2020-05-30")), any(), any())).thenReturn(Collections.singletonList(meetings.get(1)));
 
         MvcResult result = mockMvc.perform(get("/meetings")
                         .param("startDate", "2020-05-30")
@@ -256,7 +256,7 @@ public class MeetingControllerTest {
         when(repository.findByName("Meeting 1")).thenReturn(Optional.ofNullable(meetings.get(0)));
 
         MvcResult result = mockMvc.perform(get("/meetings/{name}", "Meeting 1")
-                .contentType(MediaType.APPLICATION_JSON))
+                        .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$").exists())
                 .andExpect(jsonPath("$.name").value("Meeting 1"))
@@ -315,11 +315,11 @@ public class MeetingControllerTest {
 
     @Test
     @Order(13)
-    void testRemoveMeetingValid () throws Exception {
+    void testRemoveMeetingValid() throws Exception {
         when(repository.delete("Meeting 1", "Gabriel Rogers")).thenReturn(true);
 
         mockMvc.perform(delete("/meetings/{name}", "Meeting 1")
-                .param("responsiblePerson", "Gabriel Rogers"))
+                        .param("responsiblePerson", "Gabriel Rogers"))
                 .andExpect(status().isNoContent());
 
         verify(repository, times(1)).delete("Meeting 1", "Gabriel Rogers");
@@ -327,7 +327,7 @@ public class MeetingControllerTest {
 
     @Test
     @Order(14)
-    void testRemoveMeetingInvalid () throws Exception {
+    void testRemoveMeetingInvalid() throws Exception {
         when(repository.delete("Meeting 1", "Gabriel Rogers")).thenReturn(false);
 
         mockMvc.perform(delete("/meetings/{name}", "Meeting 1")
@@ -341,7 +341,7 @@ public class MeetingControllerTest {
 
     @Test
     @Order(15)
-    void testAddParticipantsNoParticipantsProvided () throws Exception {
+    void testAddParticipantsNoParticipantsProvided() throws Exception {
         List<String> participants = Collections.emptyList();
         String jsonRequest = new ObjectMapper().writeValueAsString(participants);
 
@@ -354,7 +354,7 @@ public class MeetingControllerTest {
 
     @Test
     @Order(16)
-    void testAddParticipantsHasAlreadyInvited () throws Exception {
+    void testAddParticipantsHasAlreadyInvited() throws Exception {
         List<String> participants = Arrays.asList("Bill", "Gabe", "John");
         String jsonRequest = new ObjectMapper().writeValueAsString(participants);
         when(repository.addParticipant("Meeting 1", participants)).thenReturn(participants);
@@ -371,7 +371,7 @@ public class MeetingControllerTest {
 
     @Test
     @Order(17)
-    void testAddParticipantsValid () throws Exception {
+    void testAddParticipantsValid() throws Exception {
         List<String> participants = Arrays.asList("Bill", "Gabe", "John");
         String jsonRequest = new ObjectMapper().writeValueAsString(participants);
         when(repository.addParticipant("Meeting 1", participants)).thenReturn(Collections.emptyList());
@@ -385,7 +385,7 @@ public class MeetingControllerTest {
 
     @Test
     @Order(18)
-    void testRemoveParticipantsNoParticipantsProvided () throws Exception {
+    void testRemoveParticipantsNoParticipantsProvided() throws Exception {
         List<String> participants = Collections.emptyList();
         String jsonRequest = new ObjectMapper().writeValueAsString(participants);
 
