@@ -41,7 +41,7 @@ e.g. `GET/meetings?description=Java&responsiblePerson=Jonas&startDate=2023-05-24
 
 ### `POST/meetings`
 
-This end-point is called to create a new meeting. If the meeting with the same naming is detected, it will be over-writed. 
+This end-point is called to create a new meeting. If the meeting with the same naming is detected, it will be over-written. 
 
 **Body:**
 ```json
@@ -70,7 +70,6 @@ Worth to mention, that participants, that are already defined for the meeting, c
 **Body:**
 ```json
   {
-    {
     "name": "My third meeting",
     "responsiblePerson": "Bill Gates",
     "description": "Meeting to discuss our points and future [PART 3]",
@@ -79,10 +78,9 @@ Worth to mention, that participants, that are already defined for the meeting, c
     "startDate": "2023-06-20T20:30:00",
     "endDate": "2023-06-20T21:00:00",
     "participants": {
-      "Bill Gates": "2023-05-24T15:55:00"
+      "Bill Gates": "2023-05-24T15:55:00",
       "Michael Gray": "2023-05-24T15:56:00"
     }
-  }
   }
 ```
 
@@ -91,7 +89,7 @@ Worth to mention, that participants, that are already defined for the meeting, c
 
 ### `DELETE/meetings/{name}?responsiblePerson={responsiblePerson}`
 
-This end-point is called to delete a already existing meeting. Only responsible person has a right to delete the meeting. 
+This end-point is called to delete an already existing meeting. Only responsible person has a right to delete the meeting. 
 
 e.g. `DELETE/meetings/My third meeting?responsiblePerson=Bill Gates`
 
